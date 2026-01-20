@@ -5,7 +5,7 @@ import tea "github.com/charmbracelet/bubbletea"
 type Example1Model struct{}
 
 func (m *Example1Model) Init() tea.Cmd {
-	return nil
+	return tea.Quit
 }
 
 func (m *Example1Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
