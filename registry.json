@@ -1,5 +1,5 @@
 {
   "components": {
-    "examples/example1": "examples/example1.go"
+    "card": "card/card.go"
   }
 }
