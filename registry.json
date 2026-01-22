@@ -1,5 +1,6 @@
 {
   "components": {
+    "button": "button/button.go",
     "card": "card/card.go"
   }
 }
