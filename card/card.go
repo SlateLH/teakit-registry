@@ -40,7 +40,7 @@ var (
 			Bold(true).
 			MarginBottom(1)
 
-	baseBodyStyle = lipgloss.NewStyle()
+	baseContentStyle = lipgloss.NewStyle()
 
 	baseFooterStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("243")).
@@ -82,9 +82,9 @@ var cardStateStyles = map[CardState]func(style lipgloss.Style) lipgloss.Style{
 }
 
 type Card struct {
-	header string
-	body   string
-	footer string
+	header  string
+	content string
+	footer  string
 
 	width int
 
@@ -95,7 +95,7 @@ type Card struct {
 
 func (c Card) View() string {
 	headerStyle := baseHeaderStyle
-	bodyStyle := baseBodyStyle
+	contentStyle := baseContentStyle
 	footerStyle := baseFooterStyle
 
 	sections := []string{}
@@ -104,15 +104,13 @@ func (c Card) View() string {
 		sections = append(sections, headerStyle.Render(c.header))
 	}
 
-	if c.body != "" {
-		sections = append(sections, bodyStyle.Render(c.body))
+	if c.content != "" {
+		sections = append(sections, contentStyle.Render(c.content))
 	}
 
 	if c.footer != "" {
 		sections = append(sections, footerStyle.Render(c.footer))
 	}
-
-	content := strings.Join(sections, "\n")
 
 	style := cardVariantStyles[c.variant]
 
@@ -128,7 +126,7 @@ func (c Card) View() string {
 		style = style.Width(c.width)
 	}
 
-	return style.Render(content) + "\n"
+	return style.Render(strings.Join(sections, "\n")) + "\n"
 }
 
 type CardOption func(*Card)
@@ -136,12 +134,6 @@ type CardOption func(*Card)
 func Header(header string) CardOption {
 	return func(c *Card) {
 		c.header = header
-	}
-}
-
-func Body(body string) CardOption {
-	return func(c *Card) {
-		c.body = body
 	}
 }
 
@@ -154,12 +146,6 @@ func Footer(footer string) CardOption {
 func Width(width int) CardOption {
 	return func(c *Card) {
 		c.width = width
-	}
-}
-
-func Variant(variant CardVariant) CardOption {
-	return func(c *Card) {
-		c.variant = variant
 	}
 }
 
@@ -176,6 +162,9 @@ func State(state CardState) CardOption {
 }
 
 func newCard(card Card, options ...CardOption) Card {
+	card.size = CardSizeMd
+	card.state = CardStateNormal
+
 	for _, option := range options {
 		option(&card)
 	}
@@ -183,41 +172,37 @@ func newCard(card Card, options ...CardOption) Card {
 	return card
 }
 
-func Default(options ...CardOption) Card {
+func Default(content string, options ...CardOption) Card {
 	card := Card{
+		content: content,
 		variant: CardVariantDefault,
-		size:    CardSizeMd,
-		state:   CardStateNormal,
 	}
 
 	return newCard(card, options...)
 }
 
-func Primary(options ...CardOption) Card {
+func Primary(content string, options ...CardOption) Card {
 	card := Card{
+		content: content,
 		variant: CardVariantPrimary,
-		size:    CardSizeMd,
-		state:   CardStateNormal,
 	}
 
 	return newCard(card, options...)
 }
 
-func Muted(options ...CardOption) Card {
+func Muted(content string, options ...CardOption) Card {
 	card := Card{
+		content: content,
 		variant: CardVariantMuted,
-		size:    CardSizeMd,
-		state:   CardStateNormal,
 	}
 
 	return newCard(card, options...)
 }
 
-func Destructive(options ...CardOption) Card {
+func Destructive(content string, options ...CardOption) Card {
 	card := Card{
+		content: content,
 		variant: CardVariantDestructive,
-		size:    CardSizeMd,
-		state:   CardStateNormal,
 	}
 
 	return newCard(card, options...)
