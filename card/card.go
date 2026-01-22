@@ -112,7 +112,10 @@ func (c Card) View() string {
 		sections = append(sections, footerStyle.Render(c.footer))
 	}
 
-	style := cardVariantStyles[c.variant]
+	style, ok := cardVariantStyles[c.variant]
+	if !ok {
+		style = cardVariantStyles[CardVariantDefault]
+	}
 
 	if applySize, ok := cardSizeStyles[c.size]; ok {
 		style = applySize(style)
@@ -126,7 +129,7 @@ func (c Card) View() string {
 		style = style.Width(c.width)
 	}
 
-	return style.Render(strings.Join(sections, "\n")) + "\n"
+	return style.Render(strings.Join(sections, "\n"))
 }
 
 type CardOption func(*Card)
@@ -155,9 +158,15 @@ func Size(size CardSize) CardOption {
 	}
 }
 
-func State(state CardState) CardOption {
+func Focused() CardOption {
 	return func(c *Card) {
-		c.state = state
+		c.state = CardStateFocused
+	}
+}
+
+func Disabled() CardOption {
+	return func(c *Card) {
+		c.state = CardStateDisabled
 	}
 }
 
